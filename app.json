@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "toilettes-publiques-paris",
-    "slug": "toilettes-publiques-paris",
-    "version": "1.0.0",
+    "name": "Des toilettes à Paris",
+    "slug": "Toilettes",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,13 +17,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.francoismari.dtap",
+      "buildNumber": "1.0.2",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "L'accès à la localisation est nécessaire pour pouvoir trouver des toilettes à proximité."
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+      "package": "com.francoismari.dtap",
+      "versionCode": 3,
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
