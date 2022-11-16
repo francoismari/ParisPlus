@@ -1,7 +1,14 @@
-import { View, ScrollView, Text, Dimensions } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import styles from "./styles";
 import * as Linking from "expo-linking";
+import colors from "../../assets/colors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -12,37 +19,45 @@ export default function Info() {
       style={styles.container}
     >
       <Text style={{ marginTop: 15 }}>
-        Des toilettes à Paris recense toutes les toilettes publiques de la
-        capitale. Appuyez sur une toilette pour afficher ses horaires
-        d'ouverture, son accès PMR, etc.
+        <Text style={{ fontWeight: "bold" }}>Paris+</Text> lists all the public
+        toilets, fountains and WIFI in the capital. Tap a dot to view more
+        details (opening hours, PRM access, availability, etc.) — works without
+        internet connection!
       </Text>
 
-      <Text style={[styles.categoryTitle, { marginTop: 10 }]}>À propos</Text>
+      <Text style={[styles.categoryTitle, { marginTop: 10 }]}>About</Text>
       <View style={styles.categoryContainer}>
         <Text>
-          Créé avec 💙 à Paris par{" "}
+          Created in Paris by{" "}
           <Text
             onPress={() =>
               Linking.openURL("https://instagram.com/francoismari_")
             }
             style={{ color: "#267CDF" }}
           >
-            François MARI
+            François Mari
           </Text>
           .
         </Text>
       </View>
 
-      <Text style={styles.categoryTitle}>Données</Text>
+      <Text style={styles.categoryTitle}>Legal Notice</Text>
       <View style={styles.categoryContainer}>
         <Text>
-          Les données affichées par l'application sont issues du site internet
-          opendata.paris.fr.
+          Toilettes publiques, WI-FI, fontaines, Mairie de Paris, 2022, sous
+          license ODbL : https://opendata.paris.fr
         </Text>
       </View>
 
+      <TouchableOpacity
+        onPress={() => Linking.openURL("mailto:parisplusmedia@gmail.com")}
+        style={{ alignSelf: "center", marginTop: 15 }}
+      >
+        <Text style={{ color: colors.active }}>A problem / a suggestion?</Text>
+      </TouchableOpacity>
+
       <Text style={{ textAlign: "center", marginTop: 15 }}>
-        Des toilettes à Paris est open-source
+        © 2022, François Mari
       </Text>
     </ScrollView>
   );

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Des toilettes à Paris",
-    "slug": "Toilettes",
-    "version": "1.0.2",
+    "name": "Paris+",
+    "slug": "ParisPlus",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -13,20 +13,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.francoismari.dtap",
-      "buildNumber": "1.0.2",
+      "buildNumber": "1.2.0",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "L'accès à la localisation est nécessaire pour pouvoir trouver des toilettes à proximité."
+        "NSLocationWhenInUseUsageDescription": "Access to location is required to be able to find toilets nearby."
       }
     },
     "android": {
       "package": "com.francoismari.dtap",
-      "versionCode": 3,
+      "versionCode": 12,
       "permissions": []
     },
     "web": {

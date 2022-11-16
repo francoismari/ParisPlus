@@ -1,39 +1,38 @@
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  FontAwesome,
-  FontAwesome5,
-  AntDesign,
-  Feather,
-} from "@expo/vector-icons";
+import { Entypo, FontAwesome5, AntDesign, Feather } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import styles from "./styles";
+import colors from "../../assets/colors";
 
 const { width, height } = Dimensions.get("screen");
 
-export default function PointInfo({ route }) {
+export default function WifiPointInfo({ route }) {
   const navigation = useNavigation();
 
-  const toiletPointDetails = route.params.pointData;
+  const wifiPointDetails = route.params.pointData;
 
-  console.log(toiletPointDetails);
+  console.log(wifiPointDetails);
 
   return (
     <View style={{ flex: 1, marginHorizontal: 20, marginTop: 30 }}>
-      {toiletPointDetails.type ? (
+      {wifiPointDetails.etat2 ? (
         <View
           style={{
             paddingHorizontal: 7,
             paddingVertical: 4,
-            backgroundColor: "#4495C1",
+            backgroundColor:
+              wifiPointDetails.etat2 == "Opérationnel"
+                ? colors.operational
+                : colors.notOperational,
             borderRadius: 7,
             alignSelf: "flex-start",
             marginBottom: 7,
           }}
         >
           <Text style={{ color: "white", fontWeight: "500" }}>
-            {toiletPointDetails.type}
+            {wifiPointDetails.etat2}
           </Text>
         </View>
       ) : null}
@@ -44,14 +43,13 @@ export default function PointInfo({ route }) {
           textTransform: "capitalize",
         }}
       >
-        {toiletPointDetails.adresse}{" "}
-        {toiletPointDetails.arrondissement
-          ? "(" + toiletPointDetails.arrondissement + ")"
-          : null}
+        {wifiPointDetails.nom_site}
       </Text>
-      <Text style={styles.categoryText}>
-        Access for people with reduced mobility
+      <Text style={{ marginTop: 5 }}>
+        {wifiPointDetails.arc_adresse}{" "}
+        {wifiPointDetails.cp ? "(" + wifiPointDetails.cp + ")" : null}
       </Text>
+      <Text style={styles.categoryText}>Site code</Text>
       <View
         style={{
           padding: 14,
@@ -59,23 +57,18 @@ export default function PointInfo({ route }) {
           borderRadius: 10,
           marginTop: 10,
           borderWidth: 2,
-          borderColor:
-            toiletPointDetails.acces_pmr == "Oui" ? "#44C16F" : "red",
+          borderColor: colors.active,
           flexDirection: "row",
           alignItems: "center",
         }}
       >
-        <FontAwesome
-          name={"wheelchair"}
-          size={20}
-          color={toiletPointDetails.acces_pmr == "Oui" ? "#44C16F" : "red"}
-        />
+        <Entypo name={"key"} size={20} color={colors.active} />
         <Text style={{ fontSize: 17, marginLeft: 12, paddingRight: 10 }}>
-          {toiletPointDetails.acces_pmr}
+          {wifiPointDetails.idpw}
         </Text>
       </View>
 
-      <Text style={styles.categoryText}>Hours</Text>
+      <Text style={styles.categoryText}>Number of terminals</Text>
 
       <View
         style={{
@@ -89,41 +82,15 @@ export default function PointInfo({ route }) {
           alignItems: "center",
         }}
       >
-        <AntDesign name={"clockcircleo"} size={20} color={"#4495C1"} />
+        <AntDesign name={"wifi"} size={20} color={"#4495C1"} />
         <Text style={{ fontSize: 17, marginLeft: 12, paddingRight: 10 }}>
-          {toiletPointDetails.horaire
-            ? toiletPointDetails.horaire
-            : "Aucun horaire indiqué"}
+          {wifiPointDetails.nombre_de_borne_wifi}
         </Text>
       </View>
 
-      <Text style={styles.categoryText}>Baby Relay</Text>
-
-      <View
-        style={{
-          padding: 14,
-          backgroundColor: "white",
-          borderRadius: 10,
-          marginTop: 10,
-          borderWidth: 2,
-          borderColor: "#4495C1",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <FontAwesome5 name={"baby"} size={20} color={"#4495C1"} />
-        <Text style={{ fontSize: 17, marginLeft: 12, paddingRight: 10 }}>
-          {toiletPointDetails.relais_bebe
-            ? toiletPointDetails.relais_bebe
-            : "No baby relay indicated"}
-        </Text>
-      </View>
-
-      {toiletPointDetails.url_fiche_equipement ? (
+      {wifiPointDetails.url_fiche_equipement ? (
         <TouchableOpacity
-          onPress={() =>
-            Linking.openURL(toiletPointDetails.url_fiche_equipement)
-          }
+          onPress={() => Linking.openURL(wifiPointDetails.url_fiche_equipement)}
           style={{
             justifyContent: "center",
             alignItems: "center",

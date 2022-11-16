@@ -5,7 +5,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Info from "./screens/Info";
 import PointInfo from "./screens/PointInfo";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { FontAwesome5, Entypo } from "@expo/vector-icons";
+import { MaterialIcons, Entypo } from "@expo/vector-icons";
+import WifiPointInfo from "./screens/WifiPointInfo";
+import FountainPointInfo from "./screens/FountainPointInfo";
+import EventDetails from "./screens/EventDetails";
+import Onboarding from "./screens/Onboarding";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,14 +26,14 @@ const TabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name={"Explorer"}
+        name={"Explore"}
         component={Home}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <FontAwesome5
+            <Entypo
               // style={{ top: 12 }}
-              name={"toilet"}
+              name={"map"}
               size={24}
               color={focused ? "#44ACC1" : "gray"}
             />
@@ -37,7 +41,7 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name={"Informations"}
+        name={"About"}
         component={Info}
         options={{
           headerShown: true,
@@ -67,6 +71,13 @@ export default function StackNavigator() {
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name={"PointInfo"} component={PointInfo} />
+        <Stack.Screen name={"WifiPointInfo"} component={WifiPointInfo} />
+        <Stack.Screen
+          name={"FountainPointInfo"}
+          component={FountainPointInfo}
+        />
+        <Stack.Screen name={"EventDetails"} component={EventDetails} />
+        <Stack.Screen name={"Onboarding"} component={Onboarding} />
       </Stack.Group>
     </Stack.Navigator>
   );
