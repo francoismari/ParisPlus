@@ -1,23 +1,60 @@
+import React, { useEffect, useState } from "react";
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
-import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   FontAwesome,
   FontAwesome5,
   AntDesign,
   Feather,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import styles from "./styles";
+import * as Location from "expo-location";
+import haversineDistance from "haversine-distance";
 
 const { width, height } = Dimensions.get("screen");
 
 export default function PointInfo({ route }) {
   const navigation = useNavigation();
-
   const toiletPointDetails = route.params.pointData;
+  const [userLocation, setUserLocation] = useState(null);
+  const [distance, setDistance] = useState(null);
 
-  console.log(toiletPointDetails);
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setUserLocation(location);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (userLocation && toiletPointDetails.geo_point_2d) {
+      const distanceInMeters = haversineDistance(
+        {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        },
+        {
+          latitude: toiletPointDetails.geo_point_2d.lat,
+          longitude: toiletPointDetails.geo_point_2d.lon,
+        }
+      );
+
+      setDistance(distanceInMeters / 1000); // convert distance to kilometers
+    }
+  }, [userLocation]);
+
+  const handleGoToToilet = () => {
+    const url = `http://maps.apple.com/?daddr=${toiletPointDetails.geo_point_2d.lat},${toiletPointDetails.geo_point_2d.lon}`;
+    Linking.openURL(url);
+  };
 
   return (
     <View style={{ flex: 1, marginHorizontal: 20, marginTop: 30 }}>
@@ -49,6 +86,35 @@ export default function PointInfo({ route }) {
           ? "(" + toiletPointDetails.arrondissement + ")"
           : null}
       </Text>
+
+      {distance !== null && (
+        <Text style={styles.categoryText}>{distance.toFixed(2)}km away</Text>
+      )}
+
+      <TouchableOpacity
+        onPress={handleGoToToilet}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          paddingVertical: 15,
+          backgroundColor: "#3AB0CB",
+          marginTop: 15,
+          borderRadius: 10,
+          flexDirection: "row",
+        }}
+      >
+        <MaterialIcons name={"directions"} size={17} color={"white"} />
+        <Text
+          style={{
+            color: "white",
+            textTransform: "uppercase",
+            marginLeft: 7,
+          }}
+        >
+          Go to this toilet
+        </Text>
+      </TouchableOpacity>
+
       <Text style={styles.categoryText}>
         Access for people with reduced mobility
       </Text>
@@ -158,7 +224,7 @@ export default function PointInfo({ route }) {
           alignSelf: "center",
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 30,
+          borderRadius: 15,
         }}
       >
         <Text

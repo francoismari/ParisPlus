@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Info from "./screens/Info";
 import PointInfo from "./screens/PointInfo";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialIcons, Entypo } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import WifiPointInfo from "./screens/WifiPointInfo";
 import FountainPointInfo from "./screens/FountainPointInfo";
 import EventDetails from "./screens/EventDetails";
@@ -30,6 +30,7 @@ const TabNavigator = () => {
         component={Home}
         options={{
           headerShown: false,
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
             <Entypo
               // style={{ top: 12 }}
@@ -45,8 +46,9 @@ const TabNavigator = () => {
         component={Info}
         options={{
           headerShown: true,
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Entypo
+            <Feather
               // style={{ top: 12 }}
               name="info"
               size={24}
@@ -85,6 +87,7 @@ export default function StackNavigator() {
 
 const styles = StyleSheet.create({
   tabBar: {
+    height: "10%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Image } from "react-native";
 import React from "react";
 import colors from "../../assets/colors";
 import styles from "./styles";
@@ -17,22 +17,54 @@ export default function Onboarding() {
   };
   return (
     <View style={styles.container}>
+      <Image
+        style={{
+          width: 80,
+          height: 80,
+          resizeMode: "contain",
+          alignSelf: "center",
+          borderRadius: 20,
+        }}
+        source={require("../../assets/icon.png")}
+      />
+      <Image
+        style={{
+          width: 110,
+          height: 30,
+          resizeMode: "contain",
+          alignSelf: "center",
+          marginTop: 10
+        }}
+        source={require("../../assets/og-logo.png")}
+      />
+
       <Text
         style={{
           fontSize: Dimensions.get("screen").width * 0.08,
           fontWeight: "bold",
           textAlign: "center",
-          marginBottom: Dimensions.get("screen").width * 0.08,
+          marginTop: 5,
+          marginBottom: 2,
         }}
       >
-        Welcome to Paris+ !
+        Welcome to Paris+
+      </Text>
+
+      <Text
+        style={{
+          textAlign: "center",
+          marginBottom: Dimensions.get("screen").width * 0.08,
+          fontSize: 18,
+        }}
+      >
+        The ultimate 2024 Paris guide!
       </Text>
 
       <OnboardingCard
         icon={"toilet"}
         iconType={"fa5"}
         title={"Looking for the toilets?"}
-        description={"Find hours, disabled access & babies"}
+        description={"Find closest toilets, hours, disabled & babies access"}
       />
       <OnboardingCard
         icon={"wifi"}
@@ -48,7 +80,7 @@ export default function Onboarding() {
       />
 
       <Text style={{ textAlign: "center", fontSize: 18, marginTop: 20 }}>
-        And a lot more coming...
+        And a lot more coming!
       </Text>
 
       <TouchableOpacity
@@ -59,7 +91,7 @@ export default function Onboarding() {
           width: "100%",
           height: 45,
           backgroundColor: colors.active,
-          borderRadius: 30,
+          borderRadius: 12,
           justifyContent: "center",
           alignItems: "center",
         }}

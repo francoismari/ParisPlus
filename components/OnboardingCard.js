@@ -39,7 +39,7 @@ export default function OnboardingCard(props) {
         >
           {cardDetails.title}
         </Text>
-        <Text style={{flexWrap: 'wrap'}}>{cardDetails.description}</Text>
+        <Text style={{ flexWrap: "wrap" }}>{cardDetails.description}</Text>
       </View>
     </View>
   );

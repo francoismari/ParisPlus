@@ -125,7 +125,7 @@ export default function WifiPointInfo({ route }) {
           alignSelf: "center",
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 30,
+          borderRadius: 15,
         }}
       >
         <Text

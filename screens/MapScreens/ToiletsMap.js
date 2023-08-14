@@ -1,23 +1,38 @@
-import { ActivityIndicator, View, TouchableOpacity, Text } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import toilettesData from "../../assets/data/sanisettesparis.json";
-import wifiData from "../../assets/data/wifi-paris.json";
-import waterData from "../../assets/data/fontaines-a-boire.json";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import colors from "../../assets/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import toilettesData from "../../assets/data/sanisettesparis.json";
+import wifiData from "../../assets/data/wifi-paris.json";
+import waterData from "../../assets/data/fontaines-a-boire.json";
+import colors from "../../assets/colors";
+import ToiletMarker from "../../components/ToiletMarker";
+import { Selector } from "../../components/Selector";
+import { LoadingScreen } from "../../components/LoadingScreen";
+import { LoadingComponent } from "../../components/LoadingComponent";
+import { getDistance } from "../../functions/getDistance";
+import { determineToiletStatus } from "../../functions/determineToiletStatus";
 
 export default function ToiletsMap() {
   const navigation = useNavigation();
 
+  const datasets = useMemo(
+    () => ({
+      1: toilettesData,
+      2: wifiData,
+      3: waterData,
+    }),
+    []
+  );
+
   const [loaded, setLoaded] = useState(false);
   const [locationAccess, setLocationAccess] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
-
-  const [dataSet, setDataSet] = useState(toilettesData);
+  const [dataSet, setDataSet] = useState(datasets[1]);
   const [dataIndex, setDataIndex] = useState(1);
 
   useEffect(() => {
@@ -35,94 +50,188 @@ export default function ToiletsMap() {
         setLocationAccess(true);
         let location = await Location.getCurrentPositionAsync({});
         setUserLocation(location);
-
         setLoaded(true);
       } else {
         setLoaded(true);
       }
     })();
-  });
+  }, []);
 
-  return loaded ? (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          position: "absolute",
-          top: 50,
-          alignSelf: "center",
-          zIndex: 20,
-          width: "40%",
-          height: 50,
-          backgroundColor: "white",
-          borderRadius: 20,
-          alignItems: "center",
-          justifyContent: "space-around",
-          flexDirection: "row",
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+  const handleDataSetChange = (index) => {
+    setDataIndex(index);
+    setDataSet(datasets[index]);
+  };
 
-          elevation: 5,
+  const getClosestPoint = (dataSet, userLocation) => {
+    if (dataIndex == 1) {
+      let closestPoint = null;
+      let minDistance = Infinity;
+
+      dataSet.forEach((point) => {
+        const pointLocation = {
+          latitude: point.geo_point_2d.lat,
+          longitude: point.geo_point_2d.lon,
+        };
+        const distance = getDistance(userLocation.coords, pointLocation);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestPoint = point;
+        }
+      });
+
+      return closestPoint;
+    } else {
+      return null;
+    }
+  };
+
+  const closestPoint = useMemo(
+    () => (userLocation ? getClosestPoint(dataSet, userLocation) : null),
+    [dataSet, userLocation]
+  );
+
+  console.log(closestPoint);
+
+  const MarkerComponent = ({ data }, index) => {
+    return dataIndex === 1 ? (
+      <Marker
+        key={index}
+        coordinate={{
+          latitude: data.geo_point_2d.lat,
+          longitude: data.geo_point_2d.lon,
+        }}
+      >
+        <ToiletMarker toilet={data} />
+      </Marker>
+    ) : (
+      <Marker
+        key={data.recordid}
+        // title={point.fields.nom_site}
+        coordinate={{
+          latitude:
+            dataIndex == 1
+              ? data.fields.geo_shape.coordinates[0][1]
+              : data.fields.geo_shape.coordinates[1],
+          longitude:
+            dataIndex == 1
+              ? data.fields.geo_shape.coordinates[0][0]
+              : data.fields.geo_shape.coordinates[0],
         }}
       >
         <TouchableOpacity
-          onPress={() => {
-            setDataIndex(1);
-            setDataSet(toilettesData);
-          }}
-          style={{
-            padding: 10,
-            backgroundColor: dataIndex == 1 ? colors.active : null,
-            borderRadius: 12,
-          }}
+          onPress={() =>
+            navigation.navigate(
+              dataIndex == 1
+                ? "PointInfo"
+                : dataIndex == 2
+                ? "WifiPointInfo"
+                : "FountainPointInfo",
+              {
+                pointData: data.fields,
+              }
+            )
+          }
         >
-          <FontAwesome5
-            name={"toilet"}
-            size={17}
-            color={dataIndex == 1 ? "white" : colors.active}
-          />
+          <View
+            style={{
+              height: 40,
+              width: 40,
+              backgroundColor: "white",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.23,
+              shadowRadius: 2.62,
+
+              elevation: 4,
+            }}
+          >
+            {dataIndex == 1 ? (
+              <FontAwesome5
+                name={"toilet"}
+                size={15}
+                color={
+                  data.fields.horaire == "24 h / 24" ? "#44C16F" : colors.active
+                }
+              />
+            ) : dataIndex == 2 ? (
+              <FontAwesome5
+                name={"wifi"}
+                size={15}
+                color={
+                  data.fields.horaire == "24 h / 24" ? "#44C16F" : colors.active
+                }
+              />
+            ) : dataIndex == 3 ? (
+              <MaterialCommunityIcons
+                name={"fountain"}
+                size={15}
+                color={
+                  data.fields.dispo == "OUI"
+                    ? colors.operational
+                    : colors.notOperational
+                }
+              />
+            ) : null}
+          </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setDataIndex(2);
-            setDataSet(wifiData);
-          }}
-          style={{
-            padding: 10,
-            backgroundColor: dataIndex == 2 ? colors.active : null,
-            borderRadius: 12,
-          }}
-        >
-          <FontAwesome5
-            name={"wifi"}
-            size={15}
-            color={dataIndex == 2 ? "white" : colors.active}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setDataIndex(3);
-            setDataSet(waterData);
-          }}
-          style={{
-            padding: 10,
-            backgroundColor: dataIndex == 3 ? colors.active : null,
-            borderRadius: 12,
-          }}
-        >
-          <MaterialCommunityIcons
-            name={"fountain"}
-            size={17}
-            color={dataIndex == 3 ? "white" : colors.active}
-          />
-        </TouchableOpacity>
-      </View>
+      </Marker>
+    );
+  };
+
+  const closestToiletStatus = closestPoint
+    ? determineToiletStatus(closestPoint)
+    : null;
+
+  return loaded ? (
+    <View style={styles.container}>
+      {closestPoint && (
+        <View style={styles.infoCard}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: "500" }}>
+              Closest toilets
+            </Text>
+            {closestToiletStatus ? (
+              <View
+                style={{
+                  backgroundColor:
+                    closestToiletStatus == "Open" ? "green" : "red",
+                  alignSelf: "flex-start",
+                  padding: 5,
+                  borderRadius: 10,
+                  // marginVertical: 5,
+                }}
+              >
+                <Text style={{ color: "white" }}>
+                  {closestToiletStatus == "Open" ? "Open" : "Closed"}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+          <Text style={{ textTransform: "capitalize" }}>
+            {closestPoint.adresse && closestPoint.adresse}
+          </Text>
+          <Text>Open : {closestPoint.horaire && closestPoint.horaire}</Text>
+        </View>
+      )}
+      <Selector
+        dataSetChange={handleDataSetChange}
+        currentDataIndex={dataIndex}
+      />
       <MapView
-        style={{ height: "100%", width: "100%" }}
+        style={styles.map}
         initialRegion={
           locationAccess
             ? {
@@ -136,132 +245,41 @@ export default function ToiletsMap() {
         showsUserLocation={true}
       >
         {dataSet.length > 0 ? (
-          dataSet.map((point) => {
-            return (
-              <Marker
-                key={point.recordid}
-                // title={point.fields.nom_site}
-                coordinate={{
-                  latitude:
-                    dataIndex == 1
-                      ? point.fields.geo_shape.coordinates[0][1]
-                      : point.fields.geo_shape.coordinates[1],
-                  longitude:
-                    dataIndex == 1
-                      ? point.fields.geo_shape.coordinates[0][0]
-                      : point.fields.geo_shape.coordinates[0],
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate(
-                      dataIndex == 1
-                        ? "PointInfo"
-                        : dataIndex == 2
-                        ? "WifiPointInfo"
-                        : "FountainPointInfo",
-                      {
-                        pointData: point.fields,
-                      }
-                    )
-                  }
-                >
-                  <View
-                    style={{
-                      height: 21,
-                      width: 21,
-                      backgroundColor: "white",
-                      borderRadius: 20,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      shadowOpacity: 0.23,
-                      shadowRadius: 2.62,
-
-                      elevation: 4,
-                    }}
-                  >
-                    {dataIndex == 1 ? (
-                      <FontAwesome5
-                        name={"toilet"}
-                        size={15}
-                        color={
-                          point.fields.horaire == "24 h / 24"
-                            ? "#44C16F"
-                            : colors.active
-                        }
-                      />
-                    ) : dataIndex == 2 ? (
-                      <FontAwesome5
-                        name={"wifi"}
-                        size={10}
-                        color={
-                          point.fields.horaire == "24 h / 24"
-                            ? "#44C16F"
-                            : colors.active
-                        }
-                      />
-                    ) : dataIndex == 3 ? (
-                      <MaterialCommunityIcons
-                        name={"fountain"}
-                        size={15}
-                        color={
-                          point.fields.dispo == "OUI"
-                            ? colors.operational
-                            : colors.notOperational
-                        }
-                      />
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
-              </Marker>
-            );
-          })
+          dataSet.map((point) => (
+            <MarkerComponent key={point.recordid} data={point} />
+          ))
         ) : (
-          <View
-            style={{
-              flex: 1,
-              alignContent: "center",
-              justifyContent: "center",
-            }}
-          >
-            <View
-              style={{
-                padding: 20,
-                backgroundColor: "lightgray",
-                alignSelf: "center",
-                borderRadius: 10,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator size={"small"} />
-              <Text style={{ marginLeft: 10 }}>Loading...</Text>
-            </View>
-          </View>
+          <LoadingComponent />
         )}
       </MapView>
     </View>
   ) : (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ActivityIndicator size={"large"} />
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: "bold",
-          marginTop: 12,
-          textTransform: "uppercase",
-        }}
-      >
-        Loading
-      </Text>
-      <Text style={{ fontSize: 14, marginTop: 5 }}>
-        It may take a few seconds...
-      </Text>
-    </View>
+    <LoadingScreen />
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  map: { height: "100%", width: "100%" },
+  infoCard: {
+    position: "absolute",
+    top: 50,
+    zIndex: 20,
+    alignSelf: "center",
+    width: "95%",
+    padding: 15,
+    backgroundColor: "white",
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+    margin: 10,
+    // alignItems: "center",
+    // justifyContent: "center",
+  },
+});

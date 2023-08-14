@@ -90,7 +90,7 @@ export default function FountainPointInfo({ route }) {
           alignSelf: "center",
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 30,
+          borderRadius: 15,
         }}
       >
         <Text
@@ -101,7 +101,7 @@ export default function FountainPointInfo({ route }) {
             fontSize: 17,
           }}
         >
-          Fermer
+          Close
         </Text>
       </TouchableOpacity>
     </View>
