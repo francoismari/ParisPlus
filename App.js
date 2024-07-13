@@ -1,21 +1,30 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import StackNavigator from "./navigation";
+import useAppInit from "./src/hooks/useAppInit";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback } from "react";
+import { View } from "react-native";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const { isLoadingComplete } = useAppInit();
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isLoadingComplete) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isLoadingComplete]);
+
+  if (!isLoadingComplete) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
-      <StackNavigator />
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <StackNavigator />
+      </View>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

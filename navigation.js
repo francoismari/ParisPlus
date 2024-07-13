@@ -1,15 +1,16 @@
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import React from "react";
-import Home from "./screens/Home";
+import Home from "./src/screens/Home";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Info from "./screens/Info";
-import PointInfo from "./screens/PointInfo";
+import Info from "./src/screens/Info";
+import PointInfo from "./src/screens/PointInfo";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Entypo, Feather } from "@expo/vector-icons";
-import WifiPointInfo from "./screens/WifiPointInfo";
-import FountainPointInfo from "./screens/FountainPointInfo";
-import EventDetails from "./screens/EventDetails";
-import Onboarding from "./screens/Onboarding";
+import WifiPointInfo from "./src/screens/WifiPointInfo";
+import FountainPointInfo from "./src/screens/FountainPointInfo";
+import EventDetails from "./src/screens/EventDetails";
+import Onboarding from "./src/screens/Onboarding";
+import CollectionsScreen from "./src/screens/Collections";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,6 +26,22 @@ const TabNavigator = () => {
         tabBarActiveTintColor: "#44ACC1",
       }}
     >
+      {/* <Tab.Screen
+        name={"Collections"}
+        component={CollectionsScreen}
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <Entypo
+              // style={{ top: 12 }}
+              name={"map"}
+              size={24}
+              color={focused ? "#44ACC1" : "gray"}
+            />
+          ),
+        }}
+      /> */}
       <Tab.Screen
         name={"Explore"}
         component={Home}
@@ -45,7 +62,7 @@ const TabNavigator = () => {
         name={"About"}
         component={Info}
         options={{
-          headerShown: true,
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
             <Feather
