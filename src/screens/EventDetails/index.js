@@ -14,8 +14,6 @@ export default function EventDetails({ route }) {
 
   const eventDetails = route.params.event;
 
-  console.log(eventDetails);
-
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity

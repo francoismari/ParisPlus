@@ -17,8 +17,6 @@ const WifiPointInfo: React.FC<WifiPointInfoProps> = ({ route }) => {
 
   const wifiPointDetails = route.params.pointData;
 
-  console.log(wifiPointDetails);
-
   return (
     <View style={{ flex: 1, marginHorizontal: 20, marginTop: 30 }}>
       {wifiPointDetails.etat2 ? (

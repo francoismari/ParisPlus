@@ -23,7 +23,7 @@ import waterData from "../../../assets/data/fontaines-a-boire.json";
 import colors from "../../../assets/colors";
 import ToiletMarker from "../../components/markers/toilet-marker";
 import { Selector } from "../../components/Selector";
-import { LoadingScreen } from "../../components/LoadingScreen";
+import { LoadingScreen } from "../loading";
 import { LoadingComponent } from "../../components/ui/loading-component";
 import { getDistance } from "../../../functions/getDistance";
 import { determineToiletStatus } from "../../../functions/determineToiletStatus";
@@ -63,9 +63,6 @@ export default function ToiletsMap() {
           accuracy: Location.Accuracy.Low,
         });
         setUserLocation(location);
-
-        console.log("LOCATION : ", location);
-
         setLoaded(true);
       } else {
         setLoaded(true);
@@ -106,8 +103,6 @@ export default function ToiletsMap() {
     () => (userLocation ? getClosestPoint(dataSet, userLocation) : null),
     [dataSet, userLocation]
   );
-
-  console.log(closestPoint);
 
   const MarkerComponent = ({ data }, key) => {
     return dataIndex === 1 ? (

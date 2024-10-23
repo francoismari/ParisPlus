@@ -18,8 +18,6 @@ export default function FountainPointInfo({ route }) {
 
   const fountainPointDetails = route.params.pointData;
 
-  console.log(fountainPointDetails);
-
   return (
     <View style={{ flex: 1, marginHorizontal: 20, marginTop: 30 }}>
       {fountainPointDetails.dispo ? (

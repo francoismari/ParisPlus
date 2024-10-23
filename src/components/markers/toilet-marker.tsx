@@ -17,7 +17,6 @@ const ToiletMarker: React.FC<ToiletMarkerProps> = ({ toilet }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log("test");
         navigation.navigate("PointInfo", {
           pointData: toilet,
         });

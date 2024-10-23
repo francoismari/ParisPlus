@@ -1,6 +1,6 @@
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import React from "react";
-import colors from "../../assets/colors";
+import colors from "../../../assets/colors";
 
 export const LoadingScreen = () => {
   return (
