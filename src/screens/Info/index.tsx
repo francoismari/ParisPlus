@@ -10,9 +10,6 @@ import {
 } from "react-native";
 import React from "react";
 import * as Linking from "expo-linking";
-import colors from "../../../assets/colors";
-
-const { width } = Dimensions.get("screen");
 
 export default function Info() {
   return (

@@ -1,17 +1,12 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import ToiletsMap from "../MapScreens/ToiletsMap";
+import AppWrapper from "../../components/ui/layout/app-wrapper";
 
 export default function Home() {
   return (
-    <View style={styles.container}>
+    <AppWrapper>
       <ToiletsMap />
-    </View>
+    </AppWrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

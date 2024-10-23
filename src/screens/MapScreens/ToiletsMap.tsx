@@ -21,10 +21,10 @@ import toilettesData from "../../../assets/data/sanisettesparis.json";
 import wifiData from "../../../assets/data/wifi-paris.json";
 import waterData from "../../../assets/data/fontaines-a-boire.json";
 import colors from "../../../assets/colors";
-import ToiletMarker from "../../components/ToiletMarker";
+import ToiletMarker from "../../components/markers/toilet-marker";
 import { Selector } from "../../components/Selector";
 import { LoadingScreen } from "../../components/LoadingScreen";
-import { LoadingComponent } from "../../components/LoadingComponent";
+import { LoadingComponent } from "../../components/ui/loading-component";
 import { getDistance } from "../../../functions/getDistance";
 import { determineToiletStatus } from "../../../functions/determineToiletStatus";
 
@@ -109,21 +109,20 @@ export default function ToiletsMap() {
 
   console.log(closestPoint);
 
-  const MarkerComponent = ({ data }, index) => {
+  const MarkerComponent = ({ data }, key) => {
     return dataIndex === 1 ? (
       <Marker
-        key={index}
+        key={key}
         coordinate={{
           latitude: data.geo_point_2d?.lat,
           longitude: data.geo_point_2d?.lon,
         }}
       >
-        <ToiletMarker toilet={data} />
+        <ToiletMarker key={key} toilet={data} />
       </Marker>
     ) : (
       <Marker
         key={data.recordid}
-        // title={point.fields.nom_site}
         coordinate={{
           latitude:
             dataIndex == 1

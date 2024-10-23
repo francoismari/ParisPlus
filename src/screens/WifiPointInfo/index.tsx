@@ -6,9 +6,13 @@ import * as Linking from "expo-linking";
 import styles from "./styles";
 import colors from "../../../assets/colors";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
-export default function WifiPointInfo({ route }) {
+interface WifiPointInfoProps {
+  route: any;
+}
+
+const WifiPointInfo: React.FC<WifiPointInfoProps> = ({ route }) => {
   const navigation = useNavigation();
 
   const wifiPointDetails = route.params.pointData;
@@ -142,3 +146,5 @@ export default function WifiPointInfo({ route }) {
     </View>
   );
 }
+
+export default WifiPointInfo;
