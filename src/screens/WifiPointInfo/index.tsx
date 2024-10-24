@@ -1,15 +1,18 @@
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Entypo, FontAwesome5, AntDesign, Feather } from "@expo/vector-icons";
+import { Entypo, AntDesign, Feather } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import styles from "./styles";
 import colors from "../../../assets/colors";
+import { Wifi } from "../../types";
 
 const { width } = Dimensions.get("screen");
 
 interface WifiPointInfoProps {
-  route: any;
+  route: {
+    params: Wifi;
+  };
 }
 
 const WifiPointInfo: React.FC<WifiPointInfoProps> = ({ route }) => {
@@ -143,6 +146,6 @@ const WifiPointInfo: React.FC<WifiPointInfoProps> = ({ route }) => {
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 export default WifiPointInfo;
